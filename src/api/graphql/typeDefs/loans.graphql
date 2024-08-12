@@ -1,0 +1,10 @@
+input MonthlyAmountInput {
+  interestRate: Float!
+  insuranceRate: Float!
+  loanBalance: Float!
+  installmentsQuantity: Int!
+}
+
+type Query {
+  monthlyAmount(input: MonthlyAmountInput!): Float!
+}

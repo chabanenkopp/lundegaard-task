@@ -1,0 +1,12 @@
+{
+  "appName": "Next App",
+  "Email": "Email",
+  "Error": "Error",
+  "Home": "Home",
+  "GoBack": "Go back",
+  "changeLocale": "Change locale",
+  "loading": "Loading...",
+  "home": {
+    "title": "Loan Calculator"
+  }
+}

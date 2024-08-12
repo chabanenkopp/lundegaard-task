@@ -1,0 +1,3 @@
+query monthlyAmount($input: MonthlyAmountInput!) {
+  monthlyAmount(input: $input)
+}
