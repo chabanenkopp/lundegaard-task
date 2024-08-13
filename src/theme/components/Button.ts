@@ -10,17 +10,6 @@ export const Button: ComponentSingleStyleConfig = {
   },
   variants: {
     primary: {
-      h: 50,
-      bgColor: 'brand.black',
-      color: 'brand.white',
-      fontSize: '18px',
-      fontWeight: 400,
-      fontFamily: 'dmsans',
-      borderRadius: 0,
-      px: '29px',
-    },
-
-    pillNebula: {
       h: '44px',
       color: 'brand.white',
       bgColor: 'brand.crabNebulaLight',
@@ -30,6 +19,18 @@ export const Button: ComponentSingleStyleConfig = {
       fontFamily: 'outfit',
       px: '16px',
       py: '12px',
+      _disabled: {
+        background: 'brand.crabNebulaLight',
+      },
+      _hover: {
+        background: 'brand.juniper',
+        _disabled: {
+          background: 'brand.crabNebulaLight',
+        },
+      },
+      _active: {
+        background: 'brand.crabNebulaDark',
+      },
     },
   },
   defaultProps: {

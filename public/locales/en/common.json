@@ -7,6 +7,12 @@
   "changeLocale": "Change locale",
   "loading": "Loading...",
   "home": {
-    "title": "Loan Calculator"
+    "title": "Loan Calculator",
+    "loanBalance": "Loan amount: {{ amount }}",
+    "monthlyPayment": "Monthly Payment: €{{ amount }}",
+    "installmentsQuantity_one": "Repayment Duration: {{ count }} month",
+    "installmentsQuantity_other": "Repayment Duration: {{ count }} months",
+    "includeInsurance": "Include Insurance",
+    "submit": " Submit Loan"
   }
 }
