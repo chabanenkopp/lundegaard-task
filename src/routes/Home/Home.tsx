@@ -6,6 +6,7 @@ import { useDebounce } from 'use-debounce'
 import { useTranslation } from 'next-i18next'
 import { FormSlider } from 'components/ui/FormSlider'
 import { FormSwitch } from 'components/ui/FormSwitch'
+import { toast } from 'components/ui/toast/ToastContainer'
 import {
   DELAY,
   MAXIMUM_INSTALLMENTS_QUANTITY,
@@ -34,7 +35,7 @@ export const Home: NextPage = () => {
   const [debouncedLoanBalance] = useDebounce(watch('loanBalance'), DELAY)
   const [debouncedInstallmentsQuantity] = useDebounce(watch('installmentsQuantity'), DELAY)
 
-  const wikiSearchQuery = useMonthlyAmountQuery({
+  const monthlyAmountQuery = useMonthlyAmountQuery({
     skip: !isValid,
     variables: {
       input: {
@@ -50,14 +51,20 @@ export const Home: NextPage = () => {
     },
   })
 
-  const onSubmit = (props: LoanCalculatorFormSchemaForm) => {
+  const monthlyAmount = monthlyAmountQuery.data?.monthlyAmount.toFixed(2) ?? DEFAULT_MONTHLY_AMOUNT
+
+  const onSubmit = ({ loanBalance, installmentsQuantity }: LoanCalculatorFormSchemaForm) => {
     /**
      * API call (mutation) to create a loan can be implemented here.
      */
-    console.log('submitted', props)
+    toast({
+      status: 'success',
+      title: 'Your loan was submitted!',
+      description: `Loan balance: ${loanBalance}, number of payments: ${installmentsQuantity}, monthly amount: ${monthlyAmount}`,
+    })
   }
 
-  const isLoading = wikiSearchQuery.loading
+  const isLoading = monthlyAmountQuery.loading
 
   return (
     <>
@@ -113,8 +120,8 @@ export const Home: NextPage = () => {
 
           <FormFooter
             isLoading={isLoading}
-            isDisabled={!isValid}
-            monthlyAmount={wikiSearchQuery.data?.monthlyAmount.toFixed(2) ?? DEFAULT_MONTHLY_AMOUNT}
+            isDisabled={!isValid || isLoading}
+            monthlyAmount={monthlyAmount}
           />
         </Stack>
       </HStack>
