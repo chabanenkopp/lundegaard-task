@@ -12,6 +12,7 @@ import {
   MINIMUM_INSTALLMENTS_QUANTITY,
   MAXIMUM_LOAN_BALANCE,
   MINIMUM_LOAN_BALANCE,
+  DEFAULT_MONTHLY_AMOUNT,
 } from './Home.const'
 import { FormFooter } from './FormFooter'
 import { handleOnInstallmentsQuantityInputBlur, handleOnLoanBalanceInputBlur } from './Home.utils'
@@ -26,17 +27,15 @@ export const Home: NextPage = () => {
     control,
     register,
     handleSubmit,
-    // formState: { isValid },
+    formState: { isValid },
   } = form
 
   const [debouncedIsInsurance] = useDebounce(watch('isInsurance'), DELAY)
   const [debouncedLoanBalance] = useDebounce(watch('loanBalance'), DELAY)
   const [debouncedInstallmentsQuantity] = useDebounce(watch('installmentsQuantity'), DELAY)
 
-  const isDisabled = !debouncedInstallmentsQuantity || !debouncedLoanBalance
-
   const wikiSearchQuery = useMonthlyAmountQuery({
-    skip: isDisabled,
+    skip: !isValid,
     variables: {
       input: {
         /**
@@ -114,8 +113,8 @@ export const Home: NextPage = () => {
 
           <FormFooter
             isLoading={isLoading}
-            isDisabled={isDisabled}
-            monthlyAmount={wikiSearchQuery.data?.monthlyAmount.toFixed(2) ?? '0'}
+            isDisabled={!isValid}
+            monthlyAmount={wikiSearchQuery.data?.monthlyAmount.toFixed(2) ?? DEFAULT_MONTHLY_AMOUNT}
           />
         </Stack>
       </HStack>
