@@ -5,6 +5,7 @@ import type { NextPage } from 'next'
 import { useDebounce } from 'use-debounce'
 import { useTranslation } from 'next-i18next'
 import { FormSlider } from 'components/ui/FormSlider'
+import { FormSwitch } from 'components/ui/FormSwitch'
 import {
   DELAY,
   MAXIMUM_INSTALLMENTS_QUANTITY,
@@ -13,8 +14,8 @@ import {
   MINIMUM_LOAN_BALANCE,
 } from './Home.const'
 import { FormFooter } from './FormFooter'
+import { handleOnInstallmentsQuantityInputBlur, handleOnLoanBalanceInputBlur } from './Home.utils'
 import { LoanCalculatorFormSchemaForm, useLoanCalculatorFormForm } from './useLoanCalculatorForm'
-import { FormSwitch } from 'components/ui/FormSwitch'
 
 export const Home: NextPage = () => {
   const { t } = useTranslation(['common'])
@@ -95,7 +96,8 @@ export const Home: NextPage = () => {
             min={MINIMUM_LOAN_BALANCE}
             max={MAXIMUM_LOAN_BALANCE}
             step={MINIMUM_LOAN_BALANCE}
-            getLabel={(value) => t('home.loanBalance', { amount: value })}
+            onInputBlur={handleOnLoanBalanceInputBlur}
+            renderLabel={(value) => t('home.loanBalance', { amount: value })}
           />
 
           <FormSlider
@@ -104,7 +106,8 @@ export const Home: NextPage = () => {
             min={MINIMUM_INSTALLMENTS_QUANTITY}
             max={MAXIMUM_INSTALLMENTS_QUANTITY}
             step={MINIMUM_INSTALLMENTS_QUANTITY}
-            getLabel={(value) => t('home.installmentsQuantity', { count: Number(value) })}
+            onInputBlur={handleOnInstallmentsQuantityInputBlur}
+            renderLabel={(value) => t('home.installmentsQuantity', { count: Number(value) })}
           />
 
           <FormSwitch register={register('isInsurance')}>{t('home.includeInsurance')}</FormSwitch>
@@ -112,7 +115,7 @@ export const Home: NextPage = () => {
           <FormFooter
             isLoading={isLoading}
             isDisabled={isDisabled}
-            monthlyAmount={wikiSearchQuery.data?.monthlyAmount.toFixed(2) ?? '0.00'}
+            monthlyAmount={wikiSearchQuery.data?.monthlyAmount.toFixed(2) ?? '0'}
           />
         </Stack>
       </HStack>

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   Box,
   Slider,
@@ -8,19 +9,26 @@ import {
   Text,
   Input,
 } from '@chakra-ui/react'
+import validator from 'validator'
 import { useController, Control, FieldValues, Path } from 'react-hook-form'
+
+export type OnInputBlurProps = { value: number; min: number; max: number }
 
 type FormSliderProps<T extends FieldValues> = SliderProps & {
   name: Path<T>
   control: Control<T>
-  getLabel: (value?: string | number) => string
+  renderLabel: (value?: string | number) => string
+  onInputBlur: (props: OnInputBlurProps) => number
 }
 
 export const FormSlider = <T extends FieldValues>({
   name,
   control,
-  getLabel,
-  ...rest
+  min = 100,
+  max = 1000,
+  onInputBlur,
+  renderLabel,
+  ...props
 }: FormSliderProps<T>) => {
   const {
     field: { ref, onChange, value },
@@ -29,23 +37,69 @@ export const FormSlider = <T extends FieldValues>({
     control,
   })
 
+  const [inputValue, setInputValue] = useState<string>(value)
+
+  const handleOnSliderChange = (sliderValue: number) => {
+    onChange(sliderValue)
+    setInputValue(String(sliderValue))
+  }
+
+  const handleOnInputChange = (value: string) => {
+    /**
+     * We need to allow an empty string to make it easier for the user to edit
+     * the input value.
+     */
+    if (!value) {
+      setInputValue('')
+      return
+    }
+
+    const isValid = validator.isInt(value, {
+      allow_leading_zeroes: false,
+    })
+
+    if (isValid) {
+      setInputValue(value)
+    }
+  }
+
   return (
     <Box>
-      <Text>{getLabel(value)}</Text>
+      <Text>{renderLabel(value)}</Text>
 
-      <Slider ref={ref} value={value} onChange={onChange} {...rest}>
+      <Slider
+        ref={ref}
+        value={value}
+        onChange={handleOnSliderChange}
+        min={min}
+        max={max}
+        {...props}
+      >
         <SliderTrack>
-          <SliderFilledTrack />
+          <SliderFilledTrack bg="brand.crabNebulaLight" />
         </SliderTrack>
 
-        <SliderThumb />
+        <SliderThumb
+          boxSize={6}
+          /**
+           * Removes chakra's native blue outline applied on focus.
+           */
+          _focus={{
+            boxShadow: 'var(--chakra-shadows-base)',
+          }}
+        />
       </Slider>
 
       <Input
-        type="number"
-        value={value}
+        value={inputValue}
         onChange={(e) => {
-          onChange(Number(e.target.value))
+          handleOnInputChange(e.target.value)
+        }}
+        onBlur={(e) => {
+          const formattedValue = onInputBlur({ value: Number(e.target.value), min, max })
+
+          onChange(formattedValue)
+          setInputValue(String(formattedValue))
         }}
         mt={2}
       />
