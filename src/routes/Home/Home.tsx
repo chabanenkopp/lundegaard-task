@@ -65,7 +65,9 @@ export const Home: NextPage = () => {
     toast({
       status: 'success',
       title: 'Your loan was submitted!',
-      description: `Loan balance: ${loanBalance}, number of payments: ${installmentsQuantity}, monthly amount: ${monthlyAmount}`,
+      description: `Loan balance: ${loanBalance}, number of payments: ${installmentsQuantity}, monthly amount: ${formatCurrency(
+        { value: monthlyAmount },
+      )}`,
     })
   }
 
