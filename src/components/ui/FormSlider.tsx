@@ -1,15 +1,7 @@
 import { useState } from 'react'
 import { Control, FieldValues, Path, useController } from 'react-hook-form'
-import {
-  Box,
-  Input,
-  Slider,
-  SliderFilledTrack,
-  SliderProps,
-  SliderThumb,
-  SliderTrack,
-  Text,
-} from '@chakra-ui/react'
+import { Box, Input, SliderProps, Text } from '@chakra-ui/react'
+import { Slider } from './Slider'
 
 export type OnInputBlurProps = { value: number; min: number; max: number }
 export type OnInputChangeProps = { value: string; onChange: (value: string) => void }
@@ -75,21 +67,7 @@ export const FormSlider = <T extends FieldValues>({
         max={max}
         focusThumbOnChange={false}
         {...props}
-      >
-        <SliderTrack>
-          <SliderFilledTrack bg="brand.crabNebulaLight" />
-        </SliderTrack>
-
-        <SliderThumb
-          boxSize={6}
-          /**
-           * Removes chakra's native blue outline applied on focus.
-           */
-          _focus={{
-            boxShadow: 'var(--chakra-shadows-base)',
-          }}
-        />
-      </Slider>
+      />
 
       <Input
         value={inputValue}
