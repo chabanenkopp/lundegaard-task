@@ -48,8 +48,8 @@ export const Home: NextPage = () => {
          */
         interestRate: 0.05,
         insuranceRate: isInsuranceDebounced ? 0.2 : 0,
-        loanBalance: watch('loanBalance') ?? MINIMUM_LOAN_BALANCE,
-        installmentsQuantity: watch('installmentsQuantity') ?? MINIMUM_INSTALLMENTS_QUANTITY,
+        loanBalance: watch('loanBalance'),
+        installmentsQuantity: watch('installmentsQuantity'),
       },
     },
   })
