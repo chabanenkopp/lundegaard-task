@@ -17,7 +17,7 @@ export type OnInputChangeProps = { value: string; onChange: (value: string) => v
 type FormSliderProps<T extends FieldValues> = SliderProps & {
   name: Path<T>
   control: Control<T>
-  renderLabel: (value?: string | number) => string
+  renderLabel: (value: number) => string
   onInputBlur: (props: OnInputBlurProps) => number
   onInputChange: (props: OnInputChangeProps) => void
 }
@@ -32,15 +32,13 @@ export const FormSlider = <T extends FieldValues>({
   onInputChange,
   ...props
 }: FormSliderProps<T>) => {
-  const {
-    field: { ref, onChange, value },
-  } = useController({
+  const { field } = useController({
     name,
     control,
   })
 
-  const [inputValue, setInputValue] = useState<string>(value)
-  const [sliderValue, setSliderValue] = useState<number>(Number(value))
+  const [inputValue, setInputValue] = useState<string>(field.value)
+  const [sliderValue, setSliderValue] = useState<number>(Number(field.value))
 
   const handleOnSliderChange = (currentValue: number) => {
     setSliderValue(currentValue)
@@ -53,21 +51,26 @@ export const FormSlider = <T extends FieldValues>({
 
   const handleOnInputBlur = (currentValue: number) => {
     const formattedValue = onInputBlur({ value: Number(currentValue), min, max })
-
-    onChange(formattedValue)
+    /**
+     * We update the `react-hook-form` state with the final value only on blur.
+     */
+    field.onChange(formattedValue)
     setSliderValue(formattedValue)
     setInputValue(String(formattedValue))
   }
 
   return (
     <Box>
-      <Text>{renderLabel(value)}</Text>
+      <Text>{renderLabel(field.value)}</Text>
 
       <Slider
-        ref={ref}
         value={sliderValue}
         onChange={handleOnSliderChange}
-        onChangeEnd={onChange}
+        /**
+         * We update the `react-hook-form` state only after the user releases
+         * the slider thumb. This also serves as a debounce tool.
+         */
+        onChangeEnd={field.onChange}
         min={min}
         max={max}
         focusThumbOnChange={false}

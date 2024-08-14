@@ -17,6 +17,7 @@ import {
   MINIMUM_LOAN_BALANCE,
 } from './Home.const'
 import {
+  formatCurrency,
   handleOnInputChange,
   handleOnInstallmentsQuantityInputBlur,
   handleOnLoanBalanceInputBlur,
@@ -54,7 +55,7 @@ export const Home: NextPage = () => {
   })
 
   const isLoading = monthlyAmountQuery.loading
-  const monthlyAmount = monthlyAmountQuery.data?.monthlyAmount.toFixed(2) ?? DEFAULT_MONTHLY_AMOUNT
+  const monthlyAmount = monthlyAmountQuery.data?.monthlyAmount ?? DEFAULT_MONTHLY_AMOUNT
 
   /**
    * API call (mutation) to create a loan can be implemented here.
@@ -107,7 +108,9 @@ export const Home: NextPage = () => {
             step={MINIMUM_LOAN_BALANCE}
             onInputChange={handleOnInputChange}
             onInputBlur={handleOnLoanBalanceInputBlur}
-            renderLabel={(value) => t('home.loanBalance', { amount: value })}
+            renderLabel={(value) =>
+              t('home.loanBalance', { amount: formatCurrency({ value, precision: 0 }) })
+            }
           />
 
           <FormSlider
@@ -118,12 +121,16 @@ export const Home: NextPage = () => {
             step={MINIMUM_INSTALLMENTS_QUANTITY}
             onInputChange={handleOnInputChange}
             onInputBlur={handleOnInstallmentsQuantityInputBlur}
-            renderLabel={(value) => t('home.installmentsQuantity', { count: Number(value) })}
+            renderLabel={(value) => t('home.installmentsQuantity', { count: value })}
           />
 
           <FormSwitch register={register('isInsurance')}>{t('home.includeInsurance')}</FormSwitch>
 
-          <FormFooter isLoading={isLoading} isDisabled={!isValid} monthlyAmount={monthlyAmount} />
+          <FormFooter
+            isLoading={isLoading}
+            isDisabled={!isValid}
+            monthlyAmount={formatCurrency({ value: monthlyAmount })}
+          />
         </Stack>
       </HStack>
     </>

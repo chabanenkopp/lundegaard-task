@@ -58,6 +58,7 @@
     "class-validator": "0.14.0",
     "class-variance-authority": "0.7.0",
     "clsx": "2.1.0",
+    "currency.js": "^2.0.4",
     "date-fns": "3.0.6",
     "dompurify": "^3.0.8",
     "framer-motion": "10.17.0",

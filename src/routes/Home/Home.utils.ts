@@ -1,5 +1,13 @@
+import currency from 'currency.js'
 import validator from 'validator'
 import { OnInputBlurProps, OnInputChangeProps } from 'components/ui/FormSlider'
+
+type FormatCurrencyProps = {
+  symbol?: string
+  pattern?: string
+  precision?: number
+  value: number
+}
 
 const getClampedValue = ({ value, min, max }: OnInputBlurProps) =>
   Math.max(min, Math.min(value, max))
@@ -11,6 +19,7 @@ export const handleOnLoanBalanceInputBlur = (props: OnInputBlurProps) => {
   if (remainder >= 500) {
     return clampedValue - remainder + 1000
   }
+
   return clampedValue - remainder
 }
 
@@ -24,7 +33,6 @@ export const handleOnInputChange = ({ value, onChange }: OnInputChangeProps) => 
    */
   if (!value) {
     onChange('')
-
     return
   }
 
@@ -36,3 +44,17 @@ export const handleOnInputChange = ({ value, onChange }: OnInputChangeProps) => 
     onChange(value)
   }
 }
+
+export const formatCurrency = ({
+  value,
+  symbol = '€',
+  pattern = `! #`,
+  precision = 2,
+}: FormatCurrencyProps) =>
+  currency(value, {
+    pattern,
+    separator: ' ',
+    decimal: ',',
+    symbol,
+    precision,
+  }).format()
