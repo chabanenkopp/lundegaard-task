@@ -92,12 +92,12 @@ export const Home: NextPage = () => {
           onSubmit={(event) => {
             void handleSubmit(onSubmit)(event)
           }}
-          w="100%"
+          w="full"
           maxW="600px"
           borderWidth={1}
           borderRadius="lg"
           boxShadow="lg"
-          spacing={4}
+          spacing={8}
           p={10}
         >
           <FormSlider
@@ -108,6 +108,7 @@ export const Home: NextPage = () => {
             step={MINIMUM_LOAN_BALANCE}
             onInputChange={handleOnInputChange}
             onInputBlur={handleOnLoanBalanceInputBlur}
+            formatMinMax={(value) => formatCurrency({ value, precision: 0 })}
             renderLabel={(value) =>
               t('home.loanBalance', { amount: formatCurrency({ value, precision: 0 }) })
             }

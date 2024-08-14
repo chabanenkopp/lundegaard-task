@@ -10,6 +10,7 @@ type FormSliderProps<T extends FieldValues> = SliderProps & {
   name: Path<T>
   control: Control<T>
   renderLabel: (value: number) => string
+  formatMinMax?: (value: number) => string
   onInputBlur: (props: OnInputBlurProps) => number
   onInputChange: (props: OnInputChangeProps) => void
 }
@@ -20,6 +21,7 @@ export const FormSlider = <T extends FieldValues>({
   min = 100,
   max = 1000,
   renderLabel,
+  formatMinMax,
   onInputBlur,
   onInputChange,
   ...props
@@ -65,6 +67,8 @@ export const FormSlider = <T extends FieldValues>({
         onChangeEnd={field.onChange}
         min={min}
         max={max}
+        formattedMin={formatMinMax?.(min)}
+        formattedMax={formatMinMax?.(max)}
         focusThumbOnChange={false}
         {...props}
       />
@@ -77,7 +81,7 @@ export const FormSlider = <T extends FieldValues>({
         onBlur={(e) => {
           handleOnInputBlur(Number(e.target.value))
         }}
-        mt={2}
+        mt={6}
       />
     </Box>
   )
