@@ -1,4 +1,4 @@
-import { Text, Spinner, HStack, Button, VStack, StackProps } from '@chakra-ui/react'
+import { Button, HStack, Spinner, StackProps, Text, VStack } from '@chakra-ui/react'
 import { useTranslation } from 'next-i18next'
 
 interface FormFooterProps extends StackProps {
@@ -20,7 +20,13 @@ export const FormFooter = ({ isLoading, isDisabled, monthlyAmount, ...props }: F
         {isLoading && <Spinner size="md" />}
       </HStack>
 
-      <Button type="submit" variant="primary" isDisabled={isDisabled} w="full">
+      <Button
+        type="submit"
+        variant="primary"
+        isLoading={isLoading}
+        isDisabled={isDisabled}
+        w="full"
+      >
         {t('home.submit')}
       </Button>
     </VStack>

@@ -1,24 +1,25 @@
 import { useState } from 'react'
+import { Control, FieldValues, Path, useController } from 'react-hook-form'
 import {
   Box,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
-  SliderProps,
-  Text,
   Input,
+  Slider,
+  SliderFilledTrack,
+  SliderProps,
+  SliderThumb,
+  SliderTrack,
+  Text,
 } from '@chakra-ui/react'
-import validator from 'validator'
-import { useController, Control, FieldValues, Path } from 'react-hook-form'
 
 export type OnInputBlurProps = { value: number; min: number; max: number }
+export type OnInputChangeProps = { value: string; onChange: (value: string) => void }
 
 type FormSliderProps<T extends FieldValues> = SliderProps & {
   name: Path<T>
   control: Control<T>
   renderLabel: (value?: string | number) => string
   onInputBlur: (props: OnInputBlurProps) => number
+  onInputChange: (props: OnInputChangeProps) => void
 }
 
 export const FormSlider = <T extends FieldValues>({
@@ -26,8 +27,9 @@ export const FormSlider = <T extends FieldValues>({
   control,
   min = 100,
   max = 1000,
-  onInputBlur,
   renderLabel,
+  onInputBlur,
+  onInputChange,
   ...props
 }: FormSliderProps<T>) => {
   const {
@@ -38,29 +40,23 @@ export const FormSlider = <T extends FieldValues>({
   })
 
   const [inputValue, setInputValue] = useState<string>(value)
+  const [sliderValue, setSliderValue] = useState<number>(Number(value))
 
-  const handleOnSliderChange = (sliderValue: number) => {
-    onChange(sliderValue)
-    setInputValue(String(sliderValue))
+  const handleOnSliderChange = (currentValue: number) => {
+    setSliderValue(currentValue)
+    setInputValue(String(currentValue))
   }
 
-  const handleOnInputChange = (value: string) => {
-    /**
-     * We need to allow an empty string to make it easier for the user to edit
-     * the input value.
-     */
-    if (!value) {
-      setInputValue('')
-      return
-    }
+  const handleOnInputChange = (currentValue: string) => {
+    onInputChange({ value: currentValue, onChange: setInputValue })
+  }
 
-    const isValid = validator.isInt(value, {
-      allow_leading_zeroes: false,
-    })
+  const handleOnInputBlur = (currentValue: number) => {
+    const formattedValue = onInputBlur({ value: Number(currentValue), min, max })
 
-    if (isValid) {
-      setInputValue(value)
-    }
+    onChange(formattedValue)
+    setSliderValue(formattedValue)
+    setInputValue(String(formattedValue))
   }
 
   return (
@@ -69,10 +65,12 @@ export const FormSlider = <T extends FieldValues>({
 
       <Slider
         ref={ref}
-        value={value}
+        value={sliderValue}
         onChange={handleOnSliderChange}
+        onChangeEnd={onChange}
         min={min}
         max={max}
+        focusThumbOnChange={false}
         {...props}
       >
         <SliderTrack>
@@ -96,10 +94,7 @@ export const FormSlider = <T extends FieldValues>({
           handleOnInputChange(e.target.value)
         }}
         onBlur={(e) => {
-          const formattedValue = onInputBlur({ value: Number(e.target.value), min, max })
-
-          onChange(formattedValue)
-          setInputValue(String(formattedValue))
+          handleOnInputBlur(Number(e.target.value))
         }}
         mt={2}
       />

@@ -1,22 +1,26 @@
-import { Stack, Text, HStack } from '@chakra-ui/react'
+import { HStack, Stack, Text } from '@chakra-ui/react'
 import { useMonthlyAmountQuery } from 'apollo/generated/graphqlClient'
-import Head from 'next/head'
 import type { NextPage } from 'next'
-import { useDebounce } from 'use-debounce'
+import Head from 'next/head'
 import { useTranslation } from 'next-i18next'
+import { useDebounce } from 'use-debounce'
 import { FormSlider } from 'components/ui/FormSlider'
 import { FormSwitch } from 'components/ui/FormSwitch'
 import { toast } from 'components/ui/toast/ToastContainer'
+import { FormFooter } from './FormFooter'
 import {
+  DEFAULT_MONTHLY_AMOUNT,
   DELAY,
   MAXIMUM_INSTALLMENTS_QUANTITY,
-  MINIMUM_INSTALLMENTS_QUANTITY,
   MAXIMUM_LOAN_BALANCE,
+  MINIMUM_INSTALLMENTS_QUANTITY,
   MINIMUM_LOAN_BALANCE,
-  DEFAULT_MONTHLY_AMOUNT,
 } from './Home.const'
-import { FormFooter } from './FormFooter'
-import { handleOnInstallmentsQuantityInputBlur, handleOnLoanBalanceInputBlur } from './Home.utils'
+import {
+  handleOnInputChange,
+  handleOnInstallmentsQuantityInputBlur,
+  handleOnLoanBalanceInputBlur,
+} from './Home.utils'
 import { LoanCalculatorFormSchemaForm, useLoanCalculatorFormForm } from './useLoanCalculatorForm'
 
 export const Home: NextPage = () => {
@@ -31,9 +35,7 @@ export const Home: NextPage = () => {
     formState: { isValid },
   } = form
 
-  const [debouncedIsInsurance] = useDebounce(watch('isInsurance'), DELAY)
-  const [debouncedLoanBalance] = useDebounce(watch('loanBalance'), DELAY)
-  const [debouncedInstallmentsQuantity] = useDebounce(watch('installmentsQuantity'), DELAY)
+  const [isInsuranceDebounced] = useDebounce(watch('isInsurance'), DELAY)
 
   const monthlyAmountQuery = useMonthlyAmountQuery({
     skip: !isValid,
@@ -44,27 +46,26 @@ export const Home: NextPage = () => {
          * whatever you deem necessary.
          */
         interestRate: 0.05,
-        insuranceRate: debouncedIsInsurance ? 0.2 : 0,
-        loanBalance: debouncedLoanBalance ?? MINIMUM_LOAN_BALANCE,
-        installmentsQuantity: debouncedInstallmentsQuantity ?? MINIMUM_INSTALLMENTS_QUANTITY,
+        insuranceRate: isInsuranceDebounced ? 0.2 : 0,
+        loanBalance: watch('loanBalance') ?? MINIMUM_LOAN_BALANCE,
+        installmentsQuantity: watch('installmentsQuantity') ?? MINIMUM_INSTALLMENTS_QUANTITY,
       },
     },
   })
 
+  const isLoading = monthlyAmountQuery.loading
   const monthlyAmount = monthlyAmountQuery.data?.monthlyAmount.toFixed(2) ?? DEFAULT_MONTHLY_AMOUNT
 
+  /**
+   * API call (mutation) to create a loan can be implemented here.
+   */
   const onSubmit = ({ loanBalance, installmentsQuantity }: LoanCalculatorFormSchemaForm) => {
-    /**
-     * API call (mutation) to create a loan can be implemented here.
-     */
     toast({
       status: 'success',
       title: 'Your loan was submitted!',
       description: `Loan balance: ${loanBalance}, number of payments: ${installmentsQuantity}, monthly amount: ${monthlyAmount}`,
     })
   }
-
-  const isLoading = monthlyAmountQuery.loading
 
   return (
     <>
@@ -87,7 +88,9 @@ export const Home: NextPage = () => {
       <HStack justifyContent="center" mx={4}>
         <Stack
           as="form"
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={(event) => {
+            void handleSubmit(onSubmit)(event)
+          }}
           w="100%"
           maxW="600px"
           borderWidth={1}
@@ -102,6 +105,7 @@ export const Home: NextPage = () => {
             min={MINIMUM_LOAN_BALANCE}
             max={MAXIMUM_LOAN_BALANCE}
             step={MINIMUM_LOAN_BALANCE}
+            onInputChange={handleOnInputChange}
             onInputBlur={handleOnLoanBalanceInputBlur}
             renderLabel={(value) => t('home.loanBalance', { amount: value })}
           />
@@ -112,17 +116,14 @@ export const Home: NextPage = () => {
             min={MINIMUM_INSTALLMENTS_QUANTITY}
             max={MAXIMUM_INSTALLMENTS_QUANTITY}
             step={MINIMUM_INSTALLMENTS_QUANTITY}
+            onInputChange={handleOnInputChange}
             onInputBlur={handleOnInstallmentsQuantityInputBlur}
             renderLabel={(value) => t('home.installmentsQuantity', { count: Number(value) })}
           />
 
           <FormSwitch register={register('isInsurance')}>{t('home.includeInsurance')}</FormSwitch>
 
-          <FormFooter
-            isLoading={isLoading}
-            isDisabled={!isValid || isLoading}
-            monthlyAmount={monthlyAmount}
-          />
+          <FormFooter isLoading={isLoading} isDisabled={!isValid} monthlyAmount={monthlyAmount} />
         </Stack>
       </HStack>
     </>

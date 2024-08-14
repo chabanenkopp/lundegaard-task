@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react'
-import { Switch, FormLabel, FormControl, SwitchProps } from '@chakra-ui/react'
 import { UseFormRegisterReturn } from 'react-hook-form'
+import { FormControl, FormLabel, Switch } from '@chakra-ui/react'
 
 type FormSwitchProps = {
   register: UseFormRegisterReturn

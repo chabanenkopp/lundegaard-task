@@ -1,6 +1,6 @@
 import { GetServerSidePropsContext } from 'next'
-import { serverSideTranslations } from 'utils/i18n'
 import { Home } from 'routes/Home/Home'
+import { serverSideTranslations } from 'utils/i18n'
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => ({
   props: {

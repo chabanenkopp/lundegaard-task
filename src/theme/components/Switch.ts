@@ -1,4 +1,4 @@
-import { ComponentSingleStyleConfig, extendTheme } from '@chakra-ui/react'
+import { ComponentSingleStyleConfig } from '@chakra-ui/react'
 
 export const Switch: ComponentSingleStyleConfig = {
   baseStyle: {
