@@ -11,24 +11,28 @@ export const FormFooter = ({ isLoading, isDisabled, monthlyAmount, ...props }: F
   const { t } = useTranslation(['common'])
 
   return (
-    <VStack gap={4} {...props}>
-      <HStack justifyContent="center">
-        <Text fontSize="lg" fontWeight="bold">
-          {t('home.monthlyPayment', { amount: isLoading ? '' : monthlyAmount })}
-        </Text>
+    <VStack w="full" gap={10} {...props}>
+      {isLoading ? (
+        <Spinner size="xl" thickness="4px" emptyColor="brand.winterDay" />
+      ) : (
+        <>
+          <HStack>
+            <Text fontSize="xl" fontWeight="bold">
+              {t('home.monthlyPayment', { amount: monthlyAmount })}
+            </Text>
+          </HStack>
 
-        {isLoading && <Spinner size="md" />}
-      </HStack>
-
-      <Button
-        type="submit"
-        variant="primary"
-        isLoading={isLoading}
-        isDisabled={isDisabled}
-        w="full"
-      >
-        {t('home.submit')}
-      </Button>
+          <Button
+            type="submit"
+            variant="primary"
+            isLoading={isLoading}
+            isDisabled={isDisabled}
+            w="full"
+          >
+            {t('home.submit')}
+          </Button>
+        </>
+      )}
     </VStack>
   )
 }
